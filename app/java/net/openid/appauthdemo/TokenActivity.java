@@ -310,6 +310,8 @@ public class TokenActivity extends AppCompatActivity {
                     updateUserInfo(new JSONObject(response));
                 } catch (IOException ioEx) {
                     Log.e(TAG, "Network error when querying userinfo endpoint", ioEx);
+                    // Re-request an auth token: finish this activity to return to the main one
+                    finish();
                 } catch (JSONException jsonEx) {
                     Log.e(TAG, "Failed to parse userinfo response");
                 } finally {

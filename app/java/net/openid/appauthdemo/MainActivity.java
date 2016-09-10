@@ -55,6 +55,33 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     private AuthorizationService mAuthService;
+    private AuthState mAuthState;
+    private static IdentityProvider mIdp;
+
+    private AuthorizationServiceConfiguration.RetrieveConfigurationCallback retrieveConfigurationCallback(
+        final IdentityProvider idp)
+    {
+        return new AuthorizationServiceConfiguration.RetrieveConfigurationCallback() {
+            @Override
+            public void onFetchConfigurationCompleted(
+                    @Nullable AuthorizationServiceConfiguration serviceConfiguration,
+                    @Nullable AuthorizationException ex) {
+                if (ex != null) {
+                    Log.w(TAG, "Failed to retrieve configuration for " + idp.name, ex);
+                } else {
+                    Log.d(TAG, "configuration retrieved for " + idp.name
+                            + ", proceeding");
+                        mIdp = idp;
+                    if (idp.getClientId() == null) {
+                        // Do dynamic client registration if no client_id
+                        makeRegistrationRequest(serviceConfiguration, idp);
+                    } else {
+                        makeAuthRequest(serviceConfiguration, idp, new AuthState());
+                    }
+                }
+            }
+        };
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,26 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         for (final IdentityProvider idp : providers) {
             final AuthorizationServiceConfiguration.RetrieveConfigurationCallback retrieveCallback =
-                    new AuthorizationServiceConfiguration.RetrieveConfigurationCallback() {
-
-                        @Override
-                        public void onFetchConfigurationCompleted(
-                                @Nullable AuthorizationServiceConfiguration serviceConfiguration,
-                                @Nullable AuthorizationException ex) {
-                            if (ex != null) {
-                                Log.w(TAG, "Failed to retrieve configuration for " + idp.name, ex);
-                            } else {
-                                Log.d(TAG, "configuration retrieved for " + idp.name
-                                        + ", proceeding");
-                                if (idp.getClientId() == null) {
-                                    // Do dynamic client registration if no client_id
-                                    makeRegistrationRequest(serviceConfiguration, idp);
-                                } else {
-                                    makeAuthRequest(serviceConfiguration, idp, new AuthState());
-                                }
-                            }
-                        }
-                    };
+                retrieveConfigurationCallback(idp);
 
             FrameLayout idpButton = new FrameLayout(this);
             idpButton.setBackgroundResource(idp.buttonImageRes);
@@ -121,6 +129,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (mAuthState != null && !mAuthState.isAuthorized()) {
+            final AuthorizationServiceConfiguration.RetrieveConfigurationCallback retrieveCallback =
+                retrieveConfigurationCallback(mIdp);
+            mIdp.retrieveConfig(MainActivity.this, retrieveCallback);
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mAuthService.dispose();
@@ -138,6 +156,8 @@ public class MainActivity extends AppCompatActivity {
                 idp.getRedirectUri())
                 .setScope(idp.getScope())
                 .build();
+
+        mAuthState = authState;
 
         Log.d(TAG, "Making auth request to " + serviceConfig.authorizationEndpoint);
         mAuthService.performAuthorizationRequest(
