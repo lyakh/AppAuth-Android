@@ -55,7 +55,21 @@ class IdentityProvider {
             R.string.google_name,
             android.R.color.white);
 
-    public static final List<IdentityProvider> PROVIDERS = Arrays.asList(GOOGLE);
+    public static final IdentityProvider DWBN = new IdentityProvider(
+            "DWBN",
+            R.bool.dwbn_enabled,
+            R.string.dwbn_discovery_uri,
+            NOT_SPECIFIED, // auth endpoint is discovered
+            NOT_SPECIFIED, // token endpoint is discovered
+            NOT_SPECIFIED, // dynamic registration not supported
+            R.string.dwbn_client_id,
+            R.string.dwbn_auth_redirect_uri,
+            R.string.dwbn_scope_string,
+            R.drawable.btn_dwbn,
+            R.string.dwbn_name,
+            android.R.color.white);
+
+    public static final List<IdentityProvider> PROVIDERS = Arrays.asList(GOOGLE, DWBN);
 
     public static List<IdentityProvider> getEnabledProviders(Context context) {
         ArrayList<IdentityProvider> providers = new ArrayList<>();

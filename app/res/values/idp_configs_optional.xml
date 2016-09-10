@@ -10,4 +10,10 @@
     <string name="google_discovery_uri" translatable="false">https://accounts.google.com/.well-known/openid-configuration</string>
     <string name="google_scope_string" translatable="false">openid profile email</string>
 
+    <string name="dwbn_name">DWBN</string>
+    <string name="dwbn_discovery_uri" translatable="false">https://sso-dev.dwbn.org/.well-known/openid-configuration</string>
+    <string name="dwbn_scope_string" translatable="false">openid profile email</string>
+    <string name="dwbn_auth_redirect_scheme" translatable="false">org.dwbn.apps.YOUR_ID</string>
+    <string name="dwbn_auth_redirect_uri" translatable="false">org.dwbn.apps.YOUR_ID:/oauth2redirect</string>
+
 </resources>

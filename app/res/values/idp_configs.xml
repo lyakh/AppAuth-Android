@@ -7,7 +7,7 @@
     -->
     <eat-comment/>
 
-    <bool name="google_enabled">false</bool>
+    <bool name="google_enabled">true</bool>
     <string name="google_client_id" translatable="false">YOUR_ID.apps.googleusercontent.com</string>
     <!--
     NOTE: This scheme is automatically provisioned by Google for Android OAuth2 clients, and is
@@ -16,5 +16,8 @@
     -->
     <string name="google_auth_redirect_scheme" translatable="false">com.googleusercontent.apps.YOUR_ID</string>
     <string name="google_auth_redirect_uri" translatable="false">com.googleusercontent.apps.YOUR_ID:/oauth2redirect</string>
+
+    <bool name="dwbn_enabled">true</bool>
+    <string name="dwbn_client_id" translatable="false">YOUR_ID</string>
 
 </resources>
